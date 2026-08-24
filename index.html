@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>GOKU AI GAME MAKER 1.2</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+
+    margin: 0;
+
+    min-height: 100vh;
+
+    background: #090912;
+
+    color: white;
+
+    font-family: Arial, sans-serif;
+
+}
+
+.app {
+
+    width: 100%;
+
+    max-width: 700px;
+
+    margin: auto;
+
+    padding: 20px;
+
+}
+
+.header {
+
+    text-align: center;
+
+    padding: 30px 10px;
+
+}
+
+.logo {
+
+    font-size: 38px;
+
+    font-weight: bold;
+
+}
+
+.subtitle {
+
+    color: #aaa;
+
+    margin-top: 8px;
+
+}
+
+.card {
+
+    background: #171722;
+
+    border: 1px solid #292936;
+
+    border-radius: 20px;
+
+    padding: 20px;
+
+    margin-top: 15px;
+
+}
+
+label {
+
+    display: block;
+
+    margin-top: 15px;
+
+    color: #ddd;
+
+}
+
+input,
+select {
+
+    width: 100%;
+
+    padding: 14px;
+
+    margin-top: 8px;
+
+    border-radius: 12px;
+
+    border: 1px solid #343445;
+
+    background: #0f0f18;
+
+    color: white;
+
+    font-size: 16px;
+
+}
+
+.button {
+
+    width: 100%;
+
+    border: none;
+
+    border-radius: 14px;
+
+    padding: 16px;
+
+    margin-top: 12px;
+
+    color: white;
+
+    font-size: 17px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+}
+
+.create {
+    background: #ff7200;
+}
+
+.android {
+    background: #168f6b;
+}
+
+.build {
+    background: #5b42f3;
+}
+
+.result {
+
+    display: none;
+
+    margin-top: 18px;
+
+    padding: 18px;
+
+    background: #10101a;
+
+    border-radius: 15px;
+
+}
+
+.file {
+
+    background: #20202e;
+
+    padding: 10px;
+
+    border-radius: 8px;
+
+    margin-top: 8px;
+
+    direction: ltr;
+
+    text-align: left;
+
+}
+
+.success {
+
+    color: #7cff9b;
+
+    margin-top: 15px;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="app">
+
+<div class="header">
+
+<div class="logo">
+🔥 GOKU AI
+</div>
+
+<div class="subtitle">
+GAME MAKER 1.2
+</div>
+
+</div>
+
+<div class="card">
+
+<label>
+📝 اسم اللعبة
+</label>
+
+<input
+id="gameName"
+placeholder="My GOKU Game">
+
+<label>
+🕹️ نوع اللعبة
+</label>
+
+<select id="gameType">
+
+<option>Fighting</option>
+<option>Adventure</option>
+<option>RPG</option>
+<option>Platformer</option>
+<option>Racing</option>
+
+</select>
+
+<label>
+🎨 الرسومات
+</label>
+
+<select id="graphics">
+
+<option>2D</option>
+<option>3D</option>
+
+</select>
+
+<label>
+📱 المنصة
+</label>
+
+<select id="platform">
+
+<option>Android</option>
+<option>Web</option>
+<option>PC</option>
+
+</select>
+
+<label>
+🧠 المستوى
+</label>
+
+<select id="difficulty">
+
+<option>بسيط</option>
+<option>متوسط</option>
+<option>متقدم</option>
+
+</select>
+
+<button
+class="button create"
+onclick="createProject()">
+
+📦 إنشاء المشروع + ZIP
+
+</button>
+
+<button
+class="button android"
+onclick="downloadAndroidProject()">
+
+🤖 تحميل Android Project
+
+</button>
+
+<button
+class="button build"
+onclick="openBuild()">
+
+🔨 Build APK
+
+</button>
+
+<div
+id="projectResult"
+class="result">
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+function escapeHTML(text) {
+
+    return String(text)
+
+    .replace(/&/g, "&amp;")
+
+    .replace(/</g, "&lt;")
+
+    .replace(/>/g, "&gt;")
+
+    .replace(/"/g, "&quot;")
+
+    .replace(/'/g, "&#039;");
+
+}
+
+function getProjectData() {
+
+    let name =
+        document.getElementById("gameName")
+        .value
+        .trim();
+
+    if (!name) {
+        name = "My GOKU Game";
+    }
+
+    return {
+
+        name: name,
+
+        type:
+        document.getElementById("gameType").value,
+
+        graphics:
+        document.getElementById("graphics").value,
+
+        platform:
+        document.getElementById("platform").value,
+
+        difficulty:
+        document.getElementById("difficulty").value
+
+    };
+
+}
+
+function createHTML(data) {
+
+return `<!DOCTYPE html>
+
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1.0">
+
+<title>${escapeHTML(data.name)}</title>
+
+<style>
+
+body {
+
+background:#090912;
+color:white;
+font-family:Arial;
+text-align:center;
+padding:30px;
+
+}
+
+button {
+
+padding:15px 30px;
+border:0;
+border-radius:15px;
+background:#ff7200;
+color:white;
+font-size:18px;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>🎮 ${escapeHTML(data.name)}</h1>
+
+<p>
+Type: ${escapeHTML(data.type)}
+</p>
+
+<p>
+Graphics: ${escapeHTML(data.graphics)}
+</p>
+
+<button onclick="startGame()">
+🚀 ابدأ اللعبة
+</button>
+
+<script>
+
+function startGame() {
+
+alert(
+"🚀 بدأت اللعبة!\\n\\n" +
+${JSON.stringify(data.name)}
+);
+
+}
+
+<\/script>
+
+</body>
+
+</html>`;
+
+}
+
+function createJS(data) {
+
+return `
+
+const GAME_NAME =
+${JSON.stringify(data.name)};
+
+const GAME_TYPE =
+${JSON.stringify(data.type)};
+
+const GRAPHICS =
+${JSON.stringify(data.graphics)};
+
+console.log(
+"GAME:",
+GAME_NAME
+);
+
+console.log(
+"TYPE:",
+GAME_TYPE
+);
+
+console.log(
+"GRAPHICS:",
+GRAPHICS
+);
+
+function startGame() {
+
+alert(
+"🚀 بدأت اللعبة!\\n\\n" +
+GAME_NAME
+);
+
+}
+
+`;
+
+}
+
+function createCSS() {
+
+return `
+
+body {
+
+margin:0;
+
+background:#090912;
+
+color:white;
+
+font-family:Arial;
+
+text-align:center;
+
+padding:30px;
+
+}
+
+button {
+
+padding:15px 30px;
+
+border:0;
+
+border-radius:15px;
+
+background:#ff7200;
+
+color:white;
+
+font-size:18px;
+
+}
+
+`;
+
+}
+
+function crc32(data) {
+
+let crc = 0xffffffff;
+
+for (let i = 0; i < data.length; i++) {
+
+crc ^= data[i];
+
+for (let j = 0; j < 8; j++) {
+
+crc =
+(crc >>> 1) ^
+(
+-(crc & 1) &
+0xedb88320
+);
+
+}
+
+}
+
+return (crc ^ 0xffffffff) >>> 0;
+
+}
+
+function concatArrays(...arrays) {
+
+let total = 0;
+
+for (const a of arrays) {
+total += a.length;
+}
+
+const result =
+new Uint8Array(total);
+
+let pos = 0;
+
+for (const a of arrays) {
+
+result.set(a, pos);
+
+pos += a.length;
+
+}
+
+return result;
+
+}
+
+function createZIP(files) {
+
+const encoder =
+new TextEncoder();
+
+const localParts = [];
+const centralParts = [];
+
+const entries = [];
+
+let offset = 0;
+
+for (const filename in files) {
+
+const nameBytes =
+encoder.encode(filename);
+
+const dataBytes =
+encoder.encode(files[filename]);
+
+const crc =
+crc32(dataBytes);
+
+const header =
+new Uint8Array(30);
+
+const view =
+new DataView(header.buffer);
+
+view.setUint32(
+0,
+0x04034b50,
+true
+);
+
+view.setUint16(4,20,true);
+view.setUint16(6,0,true);
+view.setUint16(8,0,true);
+view.setUint16(10,0,true);
+view.setUint16(12,0,true);
+
+view.setUint32(
+14,
+crc,
+true
+);
+
+view.setUint32(
+18,
+dataBytes.length,
+true
+);
+
+view.setUint32(
+22,
+dataBytes.length,
+true
+);
+
+view.setUint16(
+26,
+nameBytes.length,
+true
+);
+
+view.setUint16(28,0,true);
+
+localParts.push(
+header,
+nameBytes,
+dataBytes
+);
+
+entries.push({
+
+nameBytes,
+dataBytes,
+crc,
+offset
+
+});
+
+offset +=
+30 +
+nameBytes.length +
+dataBytes.length;
+
+}
+
+let centralSize = 0;
+
+for (const entry of entries) {
+
+const header =
+new Uint8Array(46);
+
+const view =
+new DataView(header.buffer);
+
+view.setUint32(
+0,
+0x02014b50,
+true
+);
+
+view.setUint16(4,20,true);
+view.setUint16(6,20,true);
+view.setUint16(8,0,true);
+view.setUint16(10,0,true);
+view.setUint16(12,0,true);
+view.setUint16(14,0,true);
+
+view.setUint32(
+16,
+entry.crc,
+true
+);
+
+view.setUint32(
+20,
+entry.dataBytes.length,
+true
+);
+
+view.setUint32(
+24,
+entry.dataBytes.length,
+true
+);
+
+view.setUint16(
+28,
+entry.nameBytes.length,
+true
+);
+
+view.setUint16(30,0,true);
+view.setUint16(32,0,true);
+view.setUint16(34,0,true);
+view.setUint16(36,0,true);
+view.setUint32(38,0,true);
+
+view.setUint32(
+42,
+entry.offset,
+true
+);
+
+centralParts.push(
+header,
+entry.nameBytes
+);
+
+centralSize +=
+46 +
+entry.nameBytes.length;
+
+}
+
+const end =
+new Uint8Array(22);
+
+const view =
+new DataView(end.buffer);
+
+view.setUint32(
+0,
+0x06054b50,
+true
+);
+
+view.setUint16(
+8,
+entries.length,
+true
+);
+
+view.setUint16(
+10,
+entries.length,
+true
+);
+
+view.setUint32(
+12,
+centralSize,
+true
+);
+
+view.setUint32(
+16,
+offset,
+true
+);
+
+return concatArrays(
+...localParts,
+...centralParts,
+end
+);
+
+}
+
+function createProject() {
+
+const data =
+getProjectData();
+
+const files = {
+
+"index.html":
+createHTML(data),
+
+"game.js":
+createJS(data),
+
+"style.css":
+createCSS(),
+
+"README.txt":
+
+`GOKU AI GAME MAKER 1.2
+
+Game:
+${data.name}
+
+Type:
+${data.type}
+
+Graphics:
+${data.graphics}
+
+Platform:
+${data.platform}
+
+Difficulty:
+${data.difficulty}
+
+Generated by GOKU AI`
+
+};
+
+const zip =
+createZIP(files);
+
+const blob =
+new Blob(
+[zip],
+{type:"application/zip"}
+);
+
+const url =
+URL.createObjectURL(blob);
+
+const link =
+document.createElement("a");
+
+link.href = url;
+
+link.download =
+data.name
+.replace(/[\\/:*?"<>|]/g,"_")
++ ".zip";
+
+link.click();
+
+setTimeout(
+() => URL.revokeObjectURL(url),
+1000
+);
+
+const result =
+document.getElementById(
+"projectResult"
+);
+
+result.style.display =
+"block";
+
+result.innerHTML = `
+
+<h3>✅ تم إنشاء المشروع!</h3>
+
+<p>
+${escapeHTML(data.name)}
+</p>
+
+<div class="file">
+📄 index.html
+</div>
+
+<div class="file">
+📄 game.js
+</div>
+
+<div class="file">
+🎨 style.css
+</div>
+
+<div class="file">
+📄 README.txt
+</div>
+
+<p class="success">
+📦 تم تنزيل ZIP
+</p>
+
+`;
+
+}
+
+function downloadAndroidProject() {
+
+alert(
+"🤖 Android Project موجود داخل مستودع GitHub.\\n\\n" +
+"بعد رفع الملفات، استخدم Build APK."
+);
+
+}
+
+function openBuild() {
+
+window.open(
+"https://github.com/alihmmad1510-dev/AI/actions",
+"_blank"
+);
+
+}
+
+</script>
+
+</body>
+
+  </html>
