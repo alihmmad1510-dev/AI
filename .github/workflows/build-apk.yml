@@ -1,4 +1,4 @@
-name: GOKU AI - Build APK
+name: Build APK
 
 on:
   workflow_dispatch:
@@ -8,34 +8,69 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout project
         uses: actions/checkout@v4
 
-      - name: Setup Java
-        uses: actions/setup-java@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          distribution: temurin
-          java-version: "17"
+          node-version: 24
+          cache: npm
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: "8.7"
+      - name: Prepare web app
+        run: |
+          mkdir -p www
+
+          if [ -f index.html ]; then
+            cp index.html www/index.html
+          else
+            echo "ERROR: index.html not found!"
+            exit 1
+          fi
+
+          if [ -f style.css ]; then
+            cp style.css www/style.css
+          fi
+
+          if [ -f script.js ]; then
+            cp script.js www/script.js
+          fi
+
+          if [ -d images ]; then
+            cp -r images www/images
+          fi
+
+      - name: Create package.json
+        run: |
+          if [ ! -f package.json ]; then
+            npm init -y
+          fi
+
+      - name: Install Capacitor
+        run: |
+          npm install @capacitor/core @capacitor/cli @capacitor/android
+
+      - name: Initialize Capacitor
+        run: |
+          npx cap init "My App" "com.example.myapp" --web-dir=www
+
+      - name: Add Android
+        run: |
+          npx cap add android
+
+      - name: Sync Android
+        run: |
+          npx cap sync android
 
       - name: Build APK
-        working-directory: android-project
         run: |
-          gradle assembleDebug --no-daemon
-
-      - name: Find APK
-        run: |
-          echo "===== APK FILES ====="
-          find android-project -type f -name "*.apk" -print
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: GOKU-AI-GAME-MAKER-APK
-          path: android-project/app/build/outputs/apk/debug/*.apk
+          name: My-App-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
-          retention-days: 7
