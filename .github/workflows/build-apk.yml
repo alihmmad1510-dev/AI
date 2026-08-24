@@ -15,7 +15,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 24
-          cache: npm
 
       - name: Prepare web app
         run: |
@@ -26,18 +25,6 @@ jobs:
           else
             echo "ERROR: index.html not found!"
             exit 1
-          fi
-
-          if [ -f style.css ]; then
-            cp style.css www/style.css
-          fi
-
-          if [ -f script.js ]; then
-            cp script.js www/script.js
-          fi
-
-          if [ -d images ]; then
-            cp -r images www/images
           fi
 
       - name: Create package.json
